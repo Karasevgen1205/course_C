@@ -1,10 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <float.h> // Для работы с минимальными значениями, если тип данных float/double
+#include <float.h>
 #include <math.h>
 #include <windows.h>
 
-// Прототип функции решения задачи
 void processArrays(double *A, int N, double *B, int M);
 
 int main()
