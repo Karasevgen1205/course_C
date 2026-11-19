@@ -3,13 +3,14 @@
 #include <string.h>
 #include <windows.h>
 #include <ctype.h>
+#include <locale.h>
 
 const int MAX_SIZE = 256;
 
-// Р’Рѕ РІСЃРµС… Р·Р°РґР°РЅРёСЏС… РїСЂРµРґСѓСЃРјРѕС‚СЂРµС‚СЊ Р·Р°С…РІР°С‚ Рё РѕСЃРІРѕР±РѕР¶РґРµРЅРёРµ РґРёРЅР°РјРёС‡РµСЃРєРѕР№
-// РїР°РјСЏС‚Рё(РѕРїРµСЂР°С†РёРё new, delete), СЂРµС€РµРЅРёРµ РѕС„РѕСЂРјРёС‚СЊ РІ РІРёРґРµ РѕС‚РґРµР»СЊРЅРѕР№
-// С„СѓРЅРєС†РёРё, РєРѕС‚РѕСЂРѕР№ РїРµСЂРµРґР°РµС‚СЃСЏ РёСЃС…РѕРґРЅР°СЏ СЃС‚СЂРѕРєР°.РќР° РїРµС‡Р°С‚СЊ РІС‹РІРµСЃС‚Рё РёСЃС…РѕРґРЅСѓСЋ Рё РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРЅСѓСЋ СЃС‚СЂРѕРєРё.
-// Р’РІРµСЃС‚Рё СЃС‚СЂРѕРєСѓ СЃРёРјРІРѕР»РѕРІ, РµСЃР»Рё РµРµ РґР»РёРЅР° РєСЂР°С‚РЅР° 3, СѓРґР°Р»РёС‚СЊ РІСЃРµ С†РёС„СЂС‹, РґРµР»СЏС‰РёРµСЃСЏ РЅР° 3.
+// Во всех заданиях предусмотреть захват и освобождение динамической
+// памяти(операции new, delete), решение оформить в виде отдельной
+// функции, которой передается исходная строка.На печать вывести исходную и преобразованную строки.
+// Ввести строку символов, если ее длина кратна 3, удалить все цифры, делящиеся на 3.
 
 char *getPreparedString(const char *initialString, char *resultString)
 {
@@ -21,7 +22,8 @@ char *getPreparedString(const char *initialString, char *resultString)
 
     for (int i = 0; i < len; i++)
     {
-      if (isdigit(initialString[i]) && initialString[i] % 3 == 0)
+      // if (isdigit(initialString[i]) && initialString[i] % 3 == 0)
+      if (isdigit((unsigned char)initialString[i]) && (initialString[i] - '0') % 3 == 0)
       {
         continue;
       }
@@ -40,8 +42,11 @@ char *getPreparedString(const char *initialString, char *resultString)
 
 int main()
 {
-  SetConsoleCP(65001);
-  SetConsoleOutputCP(65001);
+  // SetConsoleCP(65001);
+  // SetConsoleOutputCP(65001);
+  setlocale(LC_ALL, "Russian");
+  SetConsoleCP(1251);
+  SetConsoleOutputCP(1251);
 
   char *inputString = (char *)malloc(MAX_SIZE * sizeof(char));
   char *resultString = (char *)malloc(MAX_SIZE * sizeof(char));
@@ -51,19 +56,23 @@ int main()
     return 1;
   }
 
-  printf("Р’РІРµРґРёС‚Рµ СЃС‚СЂРѕРєСѓ (РјР°РєСЃРёРјР°Р»СЊРЅР°СЏ РґР»РёРЅРЅР° %d СЃРёРјРІРѕР»РѕРІ): ", MAX_SIZE);
+  printf("Введите строку (максимальная длинна %d символов): ", MAX_SIZE);
   gets_s(inputString, MAX_SIZE);
 
-  if (!strlen(inputString))
+  // Неверный подсчет длины(strlen) : В кодировке UTF - 8(SetConsoleCP(65001))
+  // каждая русская буква занимает 2 байта, а цифра — 1 байт.
+  // Функция strlen() считает байты, а не буквы.
   {
-    printf("Р’С‹ РЅРёС‡РµРіРѕ РЅРµ РІРІРµР»Рё");
+    printf("Вы ничего не ввели");
+    free(inputString);
+    free(resultString);
     return 1;
   }
 
   getPreparedString(inputString, resultString);
 
-  printf("РСЃС…РѕРґРЅР°СЏ СЃС‚СЂРѕРєР°:        %s\n", inputString);
-  printf("РџСЂРµРѕР±СЂР°Р·РѕРІР°РЅРЅР°СЏ СЃС‚СЂРѕРєР°: %s\n", resultString);
+  printf("Исходная строка:        %s\n", inputString);
+  printf("Преобразованная строка: %s\n", resultString);
 
   free(inputString);
   free(resultString);
