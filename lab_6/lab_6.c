@@ -53,6 +53,8 @@ int main()
 
   if (inputString == NULL || resultString == NULL)
   {
+    free(inputString);
+    free(resultString);
     return 1;
   }
 

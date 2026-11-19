@@ -63,6 +63,6 @@ void getNegativeRowSum(int *n, int *m, int ***matrix)
   }
   else
   {
-    printf("Результаты анализа рядов: %d\n", sum);
+    printf("Сумма чисел в рядах, содержащих отрицательные значения: %d\n", sum);
   }
 }
