@@ -2,47 +2,58 @@
 #include <stdlib.h>
 #include <string.h>
 #include <windows.h>
-#include <locale.h>
+// Составить программу, реализующую функции указанного
+// ниже меню.Выполнить функциональное разбиение программного кода.Меню программы : 1 – Сформировать с клавиатуры строку и записать в
+// файл(строка может содержать пробелы);
+// 2 – Считать строку из файла и распечатать;
+// 3 – Зашифровать строку и записать в файл;
+// 4 – Расшифроват
+// 5 - выход
+// Каждая пара букв
+// "су", "лу" и "ту"
+// заменяется соответственно на
+// "уус", "уул" и"уут".
 
 #define MAX_SIZE 512
 #define FILE_NAME "data.txt"
 
-// РџСЂРѕС‚РѕС‚РёРїС‹ С„СѓРЅРєС†РёР№ (С„СѓРЅРєС†РёРѕРЅР°Р»СЊРЅРѕРµ СЂР°Р·Р±РёРµРЅРёРµ)
+void printSuccessMessage(const char *text);
+void printErrorMessage(const char *text);
 void writeInputToFile(const char *filename);
 void readAndPrintFromFile(const char *filename);
 void encryptFile(const char *filename);
 void decryptFile(const char *filename);
-char *encryptString(const char *src);
-char *decryptString(const char *src);
+char *encryptString(const char *string);
+char *decryptString(const char *string);
 void clearInputBuffer();
 
 int main()
 {
-  setlocale(LC_ALL, "Russian");
+  // SetConsoleCP(65001);
+  // SetConsoleOutputCP(65001);
+  // setlocale(LC_ALL, ".UTF-8");
   SetConsoleCP(1251);
   SetConsoleOutputCP(1251);
+  // setlocale(LC_ALL, "Russian");
 
-  int choice = 0;
+  printf("Меню программы:\n");
+  printf("1 - Сформировать с клавиатуры строку и записать в файл (строка может содержать пробелы)\n");
+  printf("2 - Считать строку из файла и распечатать\n");
+  printf("3 - Зашифровать строку и записать в файл\n");
+  printf("4 - Расшифровать строку и записать в файл\n");
+  printf("5 - Выход\n");
 
   while (1)
   {
-    printf("\n=== РњР•РќР® РџР РћР“Р РђРњРњР« ===\n");
-    printf("1 - РЎС„РѕСЂРјРёСЂРѕРІР°С‚СЊ СЃС‚СЂРѕРєСѓ СЃ РєР»Р°РІРёР°С‚СѓСЂС‹ Рё Р·Р°РїРёСЃР°С‚СЊ РІ С„Р°Р№Р»\n");
-    printf("2 - РЎС‡РёС‚Р°С‚СЊ СЃС‚СЂРѕРєСѓ РёР· С„Р°Р№Р»Р° Рё СЂР°СЃРїРµС‡Р°С‚Р°С‚СЊ\n");
-    printf("3 - Р—Р°С€РёС„СЂРѕРІР°С‚СЊ СЃС‚СЂРѕРєСѓ Рё Р·Р°РїРёСЃР°С‚СЊ РІ С„Р°Р№Р»\n");
-    printf("4 - Р Р°СЃС€РёС„СЂРѕРІР°С‚СЊ СЃС‚СЂРѕРєСѓ Рё Р·Р°РїРёСЃР°С‚СЊ РІ С„Р°Р№Р»\n");
-    printf("5 - Р’С‹С…РѕРґ\n");
-    printf("Р’С‹Р±РµСЂРёС‚Рµ РїСѓРЅРєС‚ РјРµРЅСЋ: ");
+    printf("Выберите пункт меню (смотреть выше, 1 - create, 2 - read, 3 - encr, 4 - decr, 5 - exit):");
 
-    if (scanf("%d", &choice) != 1)
-    {
-      printf("РћС€РёР±РєР° РІРІРѕРґР°! Р’РІРµРґРёС‚Рµ С‡РёСЃР»Рѕ РѕС‚ 1 РґРѕ 5.\n");
-      clearInputBuffer();
-      continue;
-    }
-    clearInputBuffer(); // РћС‡РёС‰Р°РµРј Р±СѓС„РµСЂ РѕС‚ СЃРёРјРІРѕР»Р° '\n' РїРѕСЃР»Рµ РІРІРѕРґР° С‡РёСЃР»Р°
+    int taskId = 0;
 
-    switch (choice)
+    scanf("%d", &taskId);
+
+    clearInputBuffer();
+
+    switch (taskId)
     {
     case 1:
       writeInputToFile(FILE_NAME);
@@ -57,239 +68,307 @@ int main()
       decryptFile(FILE_NAME);
       break;
     case 5:
-      printf("Р’С‹С…РѕРґ РёР· РїСЂРѕРіСЂР°РјРјС‹.\n");
-      return 0;
+      printf("Конец выполнения программы.\n");
+      exit(0);
     default:
-      printf("РќРµРІРµСЂРЅС‹Р№ РїСѓРЅРєС‚ РјРµРЅСЋ! РџРѕРїСЂРѕР±СѓР№С‚Рµ СЃРЅРѕРІР°.\n");
+      printf("Такого пункта нет! Попробуйте другой номер.\n");
     }
   }
-
-  return 0;
 }
 
-// РћС‡РёСЃС‚РєР° Р±СѓС„РµСЂР° СЃС‚Р°РЅРґР°СЂС‚РЅРѕРіРѕ РІРІРѕРґР°
+size_t utf8_strlen(const char *s)
+{
+  size_t count = 0;
+
+  while (*s)
+  {
+    if ((*s & 0xC0) != 0x80)
+    {
+      count++;
+    }
+    s++;
+  }
+
+  return count;
+}
+
+void printSuccessMessage(const char *text)
+{
+  printf("\033[1;32m%s\033[0m", text);
+}
+
+void printErrorMessage(const char *text)
+{
+  printf("\033[31m%s\033[0m", text);
+}
+
 void clearInputBuffer()
 {
-  int c;
-  while ((c = getchar()) != '\n' && c != EOF)
+  int character;
+  // удаляем посимвольно из строки пока не достигнем конца из-за того что
+  // метод fgets считает что последний введенный Enter и есть строка (после выбора задачи)
+  while ((character = getchar()) != '\n' && character != EOF)
     ;
 }
 
-// РџСѓРЅРєС‚ 1: Р’РІРѕРґ СЃС‚СЂРѕРєРё СЃ РєР»Р°РІРёР°С‚СѓСЂС‹ Рё Р·Р°РїРёСЃСЊ РІ С„Р°Р№Р»
 void writeInputToFile(const char *filename)
 {
-  char *buffer = (char *)malloc(MAX_SIZE * sizeof(char));
-  if (buffer == NULL)
+  char *string = (char *)malloc(MAX_SIZE * sizeof(char));
+
+  if (string == NULL)
   {
-    printf("РћС€РёР±РєР° РІС‹РґРµР»РµРЅРёСЏ РїР°РјСЏС‚Рё!\n");
+    printErrorMessage("Ошибка выделения памяти!\n");
     return;
   }
 
-  printf("Р’РІРµРґРёС‚Рµ СЃС‚СЂРѕРєСѓ: ");
-  if (fgets(buffer, MAX_SIZE, stdin) != NULL)
+  printf("Введите строку: ");
+
+  if (fgets(string, MAX_SIZE, stdin) != NULL)
   {
-    buffer[strcspn(buffer, "\n")] = '\0'; // РЈРґР°Р»СЏРµРј СЃРёРјРІРѕР» РїРµСЂРµРЅРѕСЃР° СЃС‚СЂРѕРєРё
+    string[strcspn(string, "\n")] = '\0'; // Удаляем символ переноса строки из-за специфики работы fgets
   }
 
   FILE *file = fopen(filename, "w");
+
   if (file == NULL)
   {
-    printf("РћС€РёР±РєР° РѕС‚РєСЂС‹С‚РёСЏ С„Р°Р№Р»Р° РґР»СЏ Р·Р°РїРёСЃРё!\n");
-    free(buffer);
+    printErrorMessage("Ошибка открытия файла для записи!\n");
+    free(string);
     return;
   }
 
-  fprintf(file, "%s", buffer);
+  fprintf(file, "%s", string);
   fclose(file);
-  free(buffer);
+  free(string);
 
-  printf("РЎС‚СЂРѕРєР° СѓСЃРїРµС€РЅРѕ Р·Р°РїРёСЃР°РЅР° РІ С„Р°Р№Р» '%s'.\n", filename);
+  printSuccessMessage("Строка успешно записана в файл: ");
+  printSuccessMessage(filename);
+  printf("\n");
 }
 
-// РџСѓРЅРєС‚ 2: Р§С‚РµРЅРёРµ СЃС‚СЂРѕРєРё РёР· С„Р°Р№Р»Р° Рё РІС‹РІРѕРґ РЅР° СЌРєСЂР°РЅ
 void readAndPrintFromFile(const char *filename)
 {
   FILE *file = fopen(filename, "r");
+
   if (file == NULL)
   {
-    printf("РћС€РёР±РєР°: С„Р°Р№Р» '%s' РЅРµ РЅР°Р№РґРµРЅ РёР»Рё РїСѓСЃС‚. РЎРЅР°С‡Р°Р»Р° РІС‹РїРѕР»РЅРёС‚Рµ РїСѓРЅРєС‚ 1.\n", filename);
+    printErrorMessage("Ошибка: файл ");
+    printErrorMessage(filename);
+    printErrorMessage(" не найден или пуст. Сначала выполните пункт 1.\n");
     return;
   }
 
-  char *buffer = (char *)malloc(MAX_SIZE * sizeof(char));
-  if (buffer == NULL)
+  char *string = (char *)malloc(MAX_SIZE * sizeof(char));
+
+  if (string == NULL)
   {
-    printf("РћС€РёР±РєР° РІС‹РґРµР»РµРЅРёСЏ РїР°РјСЏС‚Рё!\n");
+    printErrorMessage("Ошибка выделения памяти!\n");
     fclose(file);
     return;
   }
 
-  if (fgets(buffer, MAX_SIZE, file) != NULL)
+  if (fgets(string, MAX_SIZE, file) != NULL)
   {
-    printf("РЎРѕРґРµСЂР¶РёРјРѕРµ С„Р°Р№Р»Р°: %s\n", buffer);
+    printf("Содержимое файла: ");
+    printSuccessMessage(string);
+    printf("\n");
   }
   else
   {
-    printf("Р¤Р°Р№Р» РїСѓСЃС‚.\n");
+    printf("Файл пуст.\n");
   }
 
   fclose(file);
-  free(buffer);
+  free(string);
 }
 
-// Р¤СѓРЅРєС†РёСЏ С€РёС„СЂРѕРІР°РЅРёСЏ: "СЃСѓ" -> "СѓСѓСЃ", "Р»Сѓ" -> "СѓСѓР»", "С‚Сѓ" -> "СѓСѓС‚"
-char *encryptString(const char *src)
+char *encryptString(const char *string)
 {
-  int len = strlen(src);
-  // РџСЂРё С€РёС„СЂРѕРІР°РЅРёРё 2 СЃРёРјРІРѕР»Р° РїСЂРµРІСЂР°С‰Р°СЋС‚СЃСЏ РІ 3, РІС‹РґРµР»СЏРµРј РїР°РјСЏС‚СЊ СЃ Р·Р°РїР°СЃРѕРј (len * 1.5 + 1)
-  char *res = (char *)malloc((len * 2 + 1) * sizeof(char));
-  if (res == NULL)
-    return NULL;
+  int length = utf8_strlen(string);
+  // памяти нужно больше
+  char *res = (char *)malloc((length * 2 + 1) * sizeof(char));
 
-  int i = 0, j = 0;
-  while (i < len)
+  if (res == NULL)
   {
-    // РџСЂРѕРІРµСЂСЏРµРј РїР°СЂС‹ СЃРёРјРІРѕР»РѕРІ: "СЃСѓ", "Р»Сѓ", "С‚Сѓ"
-    if (i + 1 < len && (src[i] == 'СЃ' || src[i] == 'Р»' || src[i] == 'С‚') && src[i + 1] == 'Сѓ')
+    return NULL;
+  }
+
+  // printf("Длинна строки '%s' составляет %zu символов.\n", string, length);
+
+  int i = 0;
+  int j = 0;
+
+  while (i < length)
+  {
+    // printf("текущий символ, %c и сработал блок ", string[i]);
+    // "су", "лу", "ту"
+    // if (i + 1 < length && (string[i] == 's' || string[i] == 'l' || string[i] == 't') && string[i + 1] == 'y')
+    if (i + 1 < length && (string[i] == 'с' || string[i] == 'л' || string[i] == 'т') && string[i + 1] == 'у')
     {
-      res[j++] = 'Сѓ';
-      res[j++] = 'Сѓ';
-      res[j++] = src[i]; // РџРѕРґСЃС‚Р°РІР»СЏРµРј 'СЃ', 'Р»' РёР»Рё 'С‚'
-      i += 2;            // РџРµСЂРµС€Р°РіРёРІР°РµРј С‡РµСЂРµР· 2 РѕР±СЂР°Р±РѕС‚Р°РЅРЅС‹С… СЃРёРјРІРѕР»Р°
+      res[j] = 'у';
+      j++;
+      res[j] = 'у';
+      j++;
+      res[j] = string[i];
+      j++;
+      i += 2; // скипаем сразу 2 символа
     }
     else
     {
-      res[j++] = src[i++];
+      res[j] = string[i];
+      i++;
+      j++;
     }
   }
+
+  res[j] = '\0';
+
+  return res;
+}
+
+char *decryptString(const char *string)
+{
+  int length = utf8_strlen(string);
+
+  char *res = (char *)malloc((length + 1) * sizeof(char));
+
+  if (res == NULL)
+  {
+    return NULL;
+  };
+
+  int i = 0;
+  int j = 0;
+
+  while (i < length)
+  {
+    // "уус", "уул", "уут"
+    if (i + 2 < length && string[i] == 'у' && string[i + 1] == 'у' &&
+        (string[i + 2] == 'с' || string[i + 2] == 'л' || string[i + 2] == 'т'))
+    {
+      res[j] = string[i + 2];
+      j++;
+      res[j] = 'у';
+      j++;
+      i += 3; // скипаем сразу 3 символа
+    }
+    else
+    {
+      res[j] = string[i];
+      j++;
+      i++;
+    }
+  }
+
   res[j] = '\0';
   return res;
 }
 
-// Р¤СѓРЅРєС†РёСЏ РґРµС€РёС„СЂРѕРІР°РЅРёСЏ: "СѓСѓСЃ" -> "СЃСѓ", "СѓСѓР»" -> "Р»Сѓ", "СѓСѓС‚" -> "С‚Сѓ"
-char *decryptString(const char *src)
-{
-  int len = strlen(src);
-  // РџСЂРё СЂР°СЃС€РёС„СЂРѕРІРєРµ СЃС‚СЂРѕРєР° С‚РѕР»СЊРєРѕ СѓРјРµРЅСЊС€Р°РµС‚СЃСЏ, РґРѕСЃС‚Р°С‚РѕС‡РЅРѕ len + 1
-  char *res = (char *)malloc((len + 1) * sizeof(char));
-  if (res == NULL)
-    return NULL;
-
-  int i = 0, j = 0;
-  while (i < len)
-  {
-    // РџСЂРѕРІРµСЂСЏРµРј С‚СЂРѕР№РєРё СЃРёРјРІРѕР»РѕРІ: "СѓСѓСЃ", "СѓСѓР»", "СѓСѓС‚"
-    if (i + 2 < len && src[i] == 'Сѓ' && src[i + 1] == 'Сѓ' &&
-        (src[i + 2] == 'СЃ' || src[i + 2] == 'Р»' || src[i + 2] == 'С‚'))
-    {
-      res[j++] = src[i + 2]; // Р’РѕР·РІСЂР°С‰Р°РµРј 'СЃ', 'Р»' РёР»Рё 'С‚' РЅР° РїРµСЂРІРѕРµ РјРµСЃС‚Рѕ
-      res[j++] = 'Сѓ';
-      i += 3; // РџРµСЂРµС€Р°РіРёРІР°РµРј С‡РµСЂРµР· 3 РѕР±СЂР°Р±РѕС‚Р°РЅРЅС‹С… СЃРёРјРІРѕР»Р°
-    }
-    else
-    {
-      res[j++] = src[i++];
-    }
-  }
-  res[j] = '\0';
-  return res;
-}
-
-// РџСѓРЅРєС‚ 3: Р§С‚РµРЅРёРµ РёР· С„Р°Р№Р»Р°, С€РёС„СЂРѕРІР°РЅРёРµ Рё РїРµСЂРµР·Р°РїРёСЃСЊ С„Р°Р№Р»Р°
 void encryptFile(const char *filename)
 {
   FILE *file = fopen(filename, "r");
+
   if (file == NULL)
   {
-    printf("РћС€РёР±РєР°: С„Р°Р№Р» '%s' РЅРµ РЅР°Р№РґРµРЅ. РЎРЅР°С‡Р°Р»Р° СЃРѕР·РґР°Р№С‚Рµ РµРіРѕ (РїСѓРЅРєС‚ 1).\n", filename);
+    printErrorMessage("Ошибка: файл ");
+    printErrorMessage(filename);
+    printErrorMessage(" не найден. Сначала создайте его (пункт 1).\n");
     return;
   }
 
-  char *buffer = (char *)malloc(MAX_SIZE * sizeof(char));
-  if (buffer == NULL)
+  char *string = (char *)malloc(MAX_SIZE * sizeof(char));
+
+  if (string == NULL)
   {
     fclose(file);
     return;
   }
 
-  if (fgets(buffer, MAX_SIZE, file) == NULL)
+  if (fgets(string, MAX_SIZE, file) == NULL)
   {
-    printf("Р¤Р°Р№Р» РїСѓСЃС‚, РЅРµС‡РµРіРѕ С€РёС„СЂРѕРІР°С‚СЊ.\n");
+    printf("Файл пуст или его нет\n");
     fclose(file);
-    free(buffer);
+    free(string);
     return;
   }
+
   fclose(file);
 
-  char *encrypted = encryptString(buffer);
-  free(buffer);
+  char *encrypted = encryptString(string);
+  free(string);
 
   if (encrypted == NULL)
   {
-    printf("РћС€РёР±РєР° РІС‹РґРµР»РµРЅРёСЏ РїР°РјСЏС‚Рё РїСЂРё С€РёС„СЂРѕРІР°РЅРёРё!\n");
+    printErrorMessage("Ошибка выделения памяти при шифровании!\n");
     return;
   }
 
   file = fopen(filename, "w");
+
   if (file != NULL)
   {
     fprintf(file, "%s", encrypted);
     fclose(file);
-    printf("РЎС‚СЂРѕРєР° Р·Р°С€РёС„СЂРѕРІР°РЅР° Рё Р·Р°РїРёСЃР°РЅР° РІ С„Р°Р№Р».\n");
+    printSuccessMessage("Строка зашифрована и записана в файл.\n");
   }
   else
   {
-    printf("РћС€РёР±РєР° Р·Р°РїРёСЃРё РІ С„Р°Р№Р»!\n");
+    printErrorMessage("Ошибка записи в файл!\n");
   }
 
   free(encrypted);
 }
 
-// РџСѓРЅРєС‚ 4: Р§С‚РµРЅРёРµ РёР· С„Р°Р№Р»Р°, РґРµС€РёС„СЂРѕРІР°РЅРёРµ Рё РїРµСЂРµР·Р°РїРёСЃСЊ С„Р°Р№Р»Р°
 void decryptFile(const char *filename)
 {
   FILE *file = fopen(filename, "r");
+
   if (file == NULL)
   {
-    printf("РћС€РёР±РєР°: С„Р°Р№Р» '%s' РЅРµ РЅР°Р№РґРµРЅ.\n", filename);
+    printErrorMessage("Ошибка: файл ");
+    printErrorMessage(filename);
+    printErrorMessage(" не найден или пуст. Сначала выполните пункт 1.\n");
     return;
   }
 
-  char *buffer = (char *)malloc(MAX_SIZE * sizeof(char));
-  if (buffer == NULL)
+  char *string = (char *)malloc(MAX_SIZE * sizeof(char));
+
+  if (string == NULL)
   {
     fclose(file);
     return;
   }
 
-  if (fgets(buffer, MAX_SIZE, file) == NULL)
+  if (fgets(string, MAX_SIZE, file) == NULL)
   {
-    printf("Р¤Р°Р№Р» РїСѓСЃС‚, РЅРµС‡РµРіРѕ СЂР°СЃС€РёС„СЂРѕРІС‹РІР°С‚СЊ.\n");
+    printErrorMessage("Файл пуст, нечего расшифровывать.\n");
     fclose(file);
-    free(buffer);
+    free(string);
     return;
   }
+
   fclose(file);
 
-  char *decrypted = decryptString(buffer);
-  free(buffer);
+  char *decrypted = decryptString(string);
+  free(string);
 
   if (decrypted == NULL)
   {
-    printf("РћС€РёР±РєР° РІС‹РґРµР»РµРЅРёСЏ РїР°РјСЏС‚Рё РїСЂРё СЂР°СЃС€РёС„СЂРѕРІРєРµ!\n");
+    printErrorMessage("Ошибка выделения памяти при расшифровке!\n");
     return;
   }
 
   file = fopen(filename, "w");
+
   if (file != NULL)
   {
     fprintf(file, "%s", decrypted);
     fclose(file);
-    printf("РЎС‚СЂРѕРєР° СЂР°СЃС€РёС„СЂРѕРІР°РЅР° Рё Р·Р°РїРёСЃР°РЅР° РІ С„Р°Р№Р».\n");
+    printSuccessMessage("Строка расшифрована и записана в файл.\n");
   }
   else
   {
-    printf("РћС€РёР±РєР° Р·Р°РїРёСЃРё РІ С„Р°Р№Р»!\n");
+    printErrorMessage("Ошибка записи в файл!\n");
   }
 
   free(decrypted);
