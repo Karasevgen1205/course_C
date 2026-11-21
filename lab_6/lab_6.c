@@ -61,9 +61,14 @@ int main()
   printf("Введите строку (максимальная длинна %d символов): ", MAX_SIZE);
   gets_s(inputString, MAX_SIZE);
 
+  int stringLength = strlen(inputString);
+
+  printf("Введено \033[31m%d\033[0m символа:\n", stringLength);
+
   // Неверный подсчет длины(strlen) : В кодировке UTF - 8(SetConsoleCP(65001))
   // каждая русская буква занимает 2 байта, а цифра — 1 байт.
   // Функция strlen() считает байты, а не буквы.
+  if (!stringLength)
   {
     printf("Вы ничего не ввели");
     free(inputString);
@@ -73,8 +78,8 @@ int main()
 
   getPreparedString(inputString, resultString);
 
-  printf("Исходная строка:        %s\n", inputString);
-  printf("Преобразованная строка: %s\n", resultString);
+  printf("Исходная строка:        \033[1;32m%s\033[0m\n", inputString);
+  printf("Преобразованная строка: \033[1;32m%s\033[0m\n", resultString);
 
   free(inputString);
   free(resultString);
